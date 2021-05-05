@@ -20,8 +20,6 @@ const session = require('express-session')
  * 
  * 
 */
-router.use( session({ name: 'token', secret: 'pachverb', saveUninitialized: false, cookie: { path:'/', maxAge: 60 * 1000 * 30 }}))
-
 router.post('/login', function(req, res, next) {
   console.log(req.body.user)
   if ((req.body.user && req.body.user === pachverb.username) && (req.body.pass && req.body.pass === pachverb.pass) ) {

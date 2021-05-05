@@ -1,9 +1,10 @@
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
-const usersRouter = require('./routes/users');
 const bodyParser = require('body-parser');
 const session = require('express-session')
+const usersRouter = require('./routes/users');
+const file = require('./routes/file')
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 app.use(express.static('public')) 
 // !session注册
-
+app.use( session({ name: 'token', secret: 'pachverb', saveUninitialized: false, resave: false, cookie: { path:'/', maxAge: 60 * 1000 * 30 }}))
 app.all('*', function(req, res, next) {
   // console.log(req.headers.origin)
   // res.header("Access-Control-Allow-Origin", req.headers.origin);  // 指定跨域字段
@@ -27,5 +28,6 @@ app.all('*', function(req, res, next) {
 });
 
 app.use('/users', usersRouter);
+app.use('/file', file)
 
 module.exports = app;
