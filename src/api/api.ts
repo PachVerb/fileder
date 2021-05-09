@@ -6,7 +6,8 @@ const api = {
   },
   file: {
     list: '/api/file/list',
-    getlist: '/api/file/getcontent'
+    getlist: '/api/file/getcontent',
+    mkdir: '/api/file/mkdir'
   }
-}
-export default api
+};
+export default api;
