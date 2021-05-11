@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-10 01:28:22
+ * @LastEditTime: 2021-05-11 20:47:38
  * @Description: 
 -->
 <template>
@@ -79,7 +79,11 @@
         </a-tree>
       </a-col>
     </a-row>
-    <create-dir :visible="visible" @close="visible = $event"></create-dir>
+    <create-dir
+      :visible="visible"
+      :tree="treeData"
+      @close="visible = $event"
+    ></create-dir>
     <a-back-top>
       <div class="ant-back-top-inner">
         UP
@@ -216,6 +220,7 @@ export default class File extends Vue {
     if (!tree.length) {
       return undefined;
     }
+    console.log(this.$parent, 11111);
     for (let i = 0; i < tree.length; i++) {
       (tree[i] as { path: string }).path =
         path + '/' + (tree[i] as { title: string }).title;

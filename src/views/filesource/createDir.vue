@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-05-10 01:12:17
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-10 01:27:29
+ * @LastEditTime: 2021-05-11 21:07:25
  * @Description: 
 -->
 <template>
@@ -17,20 +17,13 @@
     <a-tree-select
       style="width: 100%"
       :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-      :tree-data="treeData"
-      placeholder="Please select"
-      tree-default-expand-all
+      treeDataSimpleMode
+      :tree-data="treec"
+      :load-data="onLoadData"
+      placeholder="选择路径"
     >
-      <span
-        v-if="key === '0-0-1'"
-        slot="title"
-        slot-scope="{ key, value }"
-        style="color: #08c"
-      >
-        Child Node1 {{ value }}
-      </span>
     </a-tree-select>
-    <p style="text-align:left; margin-top: 12px">输入目录</p>
+    <p style="text-align:left; margin-top: 12px">输入目录名</p>
     <a-input placeholder="等待输入...." />
   </a-modal>
 </template>
@@ -39,33 +32,10 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Modal, TreeSelect, Input } from 'ant-design-vue';
-const treeData = [
-  {
-    title: 'Node1',
-    value: '0-0',
-    key: '0-0',
-    children: [
-      {
-        value: '0-0-1',
-        key: '0-0-1',
-        scopedSlots: {
-          // custom title
-          title: 'title'
-        }
-      },
-      {
-        title: 'Child Node2',
-        value: '0-0-2',
-        key: '0-0-2'
-      }
-    ]
-  },
-  {
-    title: 'Node2',
-    value: '0-1',
-    key: '0-1'
-  }
-];
+import api from '@/api/api';
+import File from './index.vue';
+const treeData = [];
+
 @Component({
   name: 'Dir',
   components: {
@@ -76,6 +46,9 @@ const treeData = [
   props: {
     visible: {
       type: Boolean
+    },
+    tree: {
+      type: Array
     }
   }
 })
@@ -84,10 +57,67 @@ export default class Dir extends Vue {
 
   value = undefined;
 
-  treeData = treeData;
+  treeData = [];
 
   closeModal() {
     this.$emit('close', false);
+  }
+
+  treeca = this.tree;
+
+  // computed
+  get treec() {
+    return this.tree
+      .filter(val => val.type === 1)
+      .map(val => {
+        return {
+          id: val.path,
+          pId: val.key,
+          value: val.path,
+          title: val.title,
+          isLeaf: false
+        };
+      });
+  }
+
+  set treec(val) {
+    // debugger;
+    // console.log(val);
+
+    this.treec = val;
+  }
+
+  createPath(tree, path) {
+    return tree.map(val => {
+      return {
+        ...val,
+        path: path + '/' + val.title
+      };
+    });
+  }
+
+  async getFile(path) {
+    return await this.$req.post(api.file.getlist, {
+      path
+    });
+  }
+
+  onLoadData(node) {
+    return new Promise(resolve => {
+      this.treec = [];
+      resolve();
+    });
+    // console.log(node, this);
+    // return new Promise(resolve => {
+    //   const { value, pId } = node.dataRef;
+    //   this.getFile(value).then(res => {
+    //     let { msg } = res.data;
+    //     msg = this.createPath(msg, value);
+
+    //     this.treec = [];
+    //     resolve();
+    //   });
+    // });
   }
 }
 </script>
