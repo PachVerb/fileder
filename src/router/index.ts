@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
-import BaseLayout from '@/layout/BaseLayout.vue'
+import Vue from 'vue';
+import VueRouter, { RouteConfig } from 'vue-router';
+import BaseLayout from '@/layout/BaseLayout.vue';
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
   {
@@ -38,12 +38,12 @@ const routes: Array<RouteConfig> = [
     name: 'NotFound',
     component: () => import('@/views/404.vue')
   }
-]
+];
 
 const router = new VueRouter({
-  mode: "history",
+  mode: 'history',
   base: process.env.BASE_URL,
   routes
-})
+});
 
-export default router
+export default router;

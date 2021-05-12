@@ -10,8 +10,8 @@
     <a-layout-sider class="sider-cus-style" v-model="collapsed" collapsible>
       <div class="logo" />
       <a-menu
+        :defaultSelectedKeys="[defaultMenu]"
         theme="dark"
-        :default-selected-keys="['/home']"
         mode="inline"
         @click="checkview"
       >
@@ -42,7 +42,7 @@
         </a-row>
       </a-layout-header>
       <a-layout-content style="margin: 20px 16px; background: #fff">
-        <keep-alive><router-view></router-view></keep-alive>
+        <router-view></router-view>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -52,6 +52,8 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Layout, Row, Col, Icon, Menu } from 'ant-design-vue';
 import { userAvater } from '@/components/index';
+// import route from '@/router/index.ts';
+
 const { Header, Content, Sider } = Layout;
 const { Item, SubMenu } = Menu;
 @Component({
@@ -69,16 +71,13 @@ const { Item, SubMenu } = Menu;
     'a-sub-menu': SubMenu,
     userAvater
   },
-  watch: {
-    $route(to, from): void {
-      // 对路由变化作出响应...
-      console.log(to, from);
-    }
-  }
+  watch: {}
 })
 export default class layout extends Vue {
   // * Data
   collapsed = false;
+
+  defaultMenu = location.pathname;
 
   // * Method
   hello(): void {
@@ -92,9 +91,7 @@ export default class layout extends Vue {
   }
 
   // * Hooks
-  mounted(): void {
-    // console.log(this)
-  }
+  //   mounted(): void {}
 }
 </script>
 <style lang="less" scoped>

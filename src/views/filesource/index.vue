@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-11 20:47:38
+ * @LastEditTime: 2021-05-12 20:48:01
  * @Description: 
 -->
 <template>
@@ -13,10 +13,10 @@
           <a-dropdown type="primary">
             <a-button type="primary">新建</a-button>
             <a-menu slot="overlay" @click="onCreate">
-              <a-menu-item key="1">
+              <a-menu-item :key="1">
                 <a-icon type="folder-add" />添加目录</a-menu-item
               >
-              <a-menu-item key="2">
+              <a-menu-item :key="2">
                 <a-icon type="file-add" />添加文件</a-menu-item
               >
             </a-menu>
@@ -61,7 +61,6 @@
           showIcon
           @select="onSelect"
           @expand="onExpand"
-          @check="onCheck"
         >
           <a-icon
             slot="switcherIcon"
@@ -82,6 +81,7 @@
     <create-dir
       :visible="visible"
       :tree="treeData"
+      :mtype="menutype"
       @close="visible = $event"
     ></create-dir>
     <a-back-top>
@@ -153,6 +153,8 @@ export default class File extends Vue {
 
   visible = false;
 
+  menutype = 0;
+
   onExpand(
     key: unknown,
     e: {
@@ -160,7 +162,7 @@ export default class File extends Vue {
       node: { dataRef: { slots: { icon: string }; class: string } };
     }
   ): void {
-    console.log(key, e);
+    // console.log(key, e);
     if (!e.expanded && (e.node.dataRef as any).type === 1) {
       (e.node.dataRef as any).scopedSlots.icon = 'icon-wenjianjia';
       e.node.dataRef.class = 'default';
@@ -220,7 +222,7 @@ export default class File extends Vue {
     if (!tree.length) {
       return undefined;
     }
-    console.log(this.$parent, 11111);
+    // console.log(this.$parent, 11111);
     for (let i = 0; i < tree.length; i++) {
       (tree[i] as { path: string }).path =
         path + '/' + (tree[i] as { title: string }).title;
@@ -245,7 +247,7 @@ export default class File extends Vue {
   async getList(): Promise<void> {
     await this.$req(api.file.list).then(
       (res: { data: { msg: Record<string, number>[] } }) => {
-        console.log(res);
+        // console.log(res);
         const { msg } = res.data;
         this.setIcon(msg as any);
         this.createPath(msg as any, '/');
@@ -258,7 +260,7 @@ export default class File extends Vue {
   loadData(node: {
     dataRef: { type: number; path: string; children: any };
   }): Promise<void> {
-    console.log(node);
+    // console.log(node);
     return new Promise(resolve => {
       if (node.dataRef.type === 0) {
         resolve();
@@ -280,18 +282,16 @@ export default class File extends Vue {
   }
 
   // 创建目录
-  onCreate(val: any): void {
-    console.log(val);
-    if (val.key === '1') {
-      this.visible = true;
-      this.checkable = true;
-    } else {
-    }
+  onCreate({ key }): void {
+    // console.log(val);
+    this.menutype = key;
+    this.visible = true;
+    this.checkable = true;
   }
 
   // 文件选择
   onCheck(key: any, e: any): void {
-    console.log(key);
+    // console.log(key);
     if (e.node.dataRef.type !== 1 && key.checked.length > 0) {
       notification.info({
         description: '请选择目录',
@@ -317,7 +317,7 @@ export default class File extends Vue {
         mkdir: 'haha'
       })
       .then((res: any) => {
-        console.log(res);
+        // console.log(res);
       });
   }
 
