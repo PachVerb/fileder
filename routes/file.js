@@ -93,4 +93,32 @@ router.post("/mkdir", async (req, res) => {
   return res.end();
 });
 
+// * 移除目录
+/**
+ * I fs.prmoises
+ * II. rm -> argus
+ * @parm {string} path - 移除指定路径的文件或目录
+ * @parm {object} options - 配置项目
+ * 1. maxRetries: 遇到错误时，nodejs尝试重新操作此顺
+ * 2. retryDelay: 每次操作的质检的间隔
+ * 3. recursive: 递归删除
+ *
+ *
+ */
+router.post("/remove", async (req, res) => {
+  const { path } = req.body;
+  const fullPath = root + path.substring(path.indexOf("/") + 1, path.length);
+
+  try {
+    await fs.promises.rmdir(fullPath, {
+      maxRetries: 1,
+      retryDelay: 100,
+      recursive: false,
+    });
+    res.send({ code: 0, msg: "删除成功" });
+  } catch (err) {
+    res.send({ code: 1, msg: "操作失败:" + err });
+  }
+});
+
 module.exports = router;
