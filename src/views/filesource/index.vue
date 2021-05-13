@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-12 20:48:01
+ * @LastEditTime: 2021-05-14 01:21:59
  * @Description: 
 -->
 <template>
@@ -25,13 +25,18 @@
           <a-button type="primary" style="background: #4ba47c" icon="download">
             下载
           </a-button>
-          <a-button type="primary" style="background: #4ba47c" icon="upload">
+          <a-button
+            type="primary"
+            style="background: #4ba47c"
+            icon="upload"
+            @click="onUp"
+          >
             上传
           </a-button>
           <a-button type="primary" style="background: #4ba47c" icon="retweet">
             移动
           </a-button>
-          <a-button type="danger" icon="delete">
+          <a-button type="danger" icon="delete" @click="onDelete">
             删除
           </a-button>
           <a-button
@@ -59,6 +64,10 @@
           :load-data="loadData"
           :tree-data="treeData"
           showIcon
+          :replaceFields="{
+            key: 'path'
+          }"
+          v-model="checkedKey"
           @select="onSelect"
           @expand="onExpand"
         >
@@ -89,6 +98,32 @@
         UP
       </div>
     </a-back-top>
+
+    <a-drawer
+      title="Basic Drawer"
+      placement="right"
+      :closable="false"
+      :visible="tvisible"
+      :width="600"
+    >
+      <a-upload-dragger
+        name="file"
+        :multiple="true"
+        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+        @change="handleChange"
+      >
+        <p class="ant-upload-drag-icon">
+          <a-icon type="inbox" />
+        </p>
+        <p class="ant-upload-text">
+          Click or drag file to this area to upload
+        </p>
+        <p class="ant-upload-hint">
+          Support for a single or bulk upload. Strictly prohibit from uploading
+          company data or other band files
+        </p>
+      </a-upload-dragger>
+    </a-drawer>
   </a-card>
 </template>
 
@@ -96,6 +131,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import BMenu from '@/components/menu/index.vue';
+// import Checked from '@/type/filesource.d.ts';
 import {
   Card,
   Row,
@@ -109,7 +145,10 @@ import {
   Tree,
   Divider,
   notification,
-  BackTop
+  BackTop,
+  message,
+  Upload,
+  Drawer
 } from 'ant-design-vue';
 import createDir from './createDir.vue';
 import api from '@/api/api';
@@ -117,6 +156,7 @@ const { Search } = Input;
 const { Item } = Menu;
 const { Button } = Dropdown;
 const { DirectoryTree, TreeNode } = Tree;
+const { Dragger: DragUp } = Upload;
 
 @Component({
   name: 'File',
@@ -138,6 +178,8 @@ const { DirectoryTree, TreeNode } = Tree;
     'a-divider': Divider,
     'a-dropdown': Dropdown,
     'a-back-top': BackTop,
+    'a-drawer': Drawer,
+    'a-upload-dragger': DragUp,
     BMenu,
     createDir
   }
@@ -149,11 +191,16 @@ export default class File extends Vue {
 
   aexpandeds = true;
 
-  checkable = false;
+  checkable = true;
 
   visible = false;
 
   menutype = 0;
+
+  checkedKey: any = {};
+
+  // 传输
+  tvisible = false;
 
   onExpand(
     key: unknown,
@@ -247,7 +294,6 @@ export default class File extends Vue {
   async getList(): Promise<void> {
     await this.$req(api.file.list).then(
       (res: { data: { msg: Record<string, number>[] } }) => {
-        // console.log(res);
         const { msg } = res.data;
         this.setIcon(msg as any);
         this.createPath(msg as any, '/');
@@ -255,6 +301,8 @@ export default class File extends Vue {
       }
     );
   }
+
+  //* 选中节点树
 
   // eslint-disable-next-line no-undef
   loadData(node: {
@@ -282,45 +330,65 @@ export default class File extends Vue {
   }
 
   // 创建目录
-  onCreate({ key }): void {
+  onCreate(e: any): void {
     // console.log(val);
-    this.menutype = key;
+    this.menutype = e.key;
     this.visible = true;
-    this.checkable = true;
   }
 
   // 文件选择
-  onCheck(key: any, e: any): void {
-    // console.log(key);
-    if (e.node.dataRef.type !== 1 && key.checked.length > 0) {
+  onDelete() {
+    if (
+      !this.checkedKey.checked ||
+      this.checkedKey.checked.length > 1 ||
+      this.checkedKey.checked.length === 0
+    ) {
       notification.info({
-        description: '请选择目录',
-        message: '通知'
+        description: '选择一个文件或目录后在操作～～～',
+        message: '提示',
+        duration: 3,
+        getContainer: () => document.body
       });
-      return undefined;
+      return false;
     }
-    if (e.node.dataRef.type === 1 && key.checked.length > 1) {
-      notification.info({
-        description: '请勾选一个目录创建',
-        message: '通知'
-      });
-      return undefined;
-    }
-    this.mkdir(e.node.dataRef.path);
+    this.Remove(this.checkedKey.checked[0]).then(res => {
+      if (!res.data.code) {
+        message.success(res.data.msg);
+        this.getList();
+      } else {
+        message.warning(res.data.msg);
+      }
+    });
   }
 
-  // 创建文件
-  async mkdir(path: string): Promise<void> {
-    this.$req
-      .post(api.file.mkdir, {
-        path,
-        mkdir: 'haha'
-      })
-      .then((res: any) => {
-        // console.log(res);
-      });
+  // 移除目录
+  async Remove(path: string) {
+    try {
+      const res = await this.$req.post(api.file.rmove, { path });
+
+      return res;
+    } catch (err) {
+      message.warning('操作失败:' + err);
+    }
   }
 
+  // upload
+
+  handleChange(info: any) {
+    const status = info.file.status;
+    if (status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (status === 'done') {
+      this.$message.success(`${info.file.name} file uploaded successfully.`);
+    } else if (status === 'error') {
+      this.$message.error(`${info.file.name} file upload failed.`);
+    }
+  }
+
+  onUp() {
+    this.tvisible = true;
+  }
   //
   created(): void {
     this.getList(); // 初始化目录

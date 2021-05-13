@@ -1,3 +1,10 @@
+/*
+ * @Author: wangshan
+ * @Date: 2021-05-03 22:27:40
+ * @LastEditors: wangshan
+ * @LastEditTime: 2021-05-14 01:24:12
+ * @Description:
+ */
 import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import BaseLayout from '@/layout/BaseLayout.vue';
@@ -20,6 +27,16 @@ const routes: Array<RouteConfig> = [
         path: 'file',
         name: 'File',
         component: () => import('@/views/filesource/index.vue')
+      },
+      {
+        path: '/transfer',
+        name: 'Trans',
+        component: () => import('@/views/transfer/index.vue')
+      },
+      {
+        path: '/trash',
+        name: 'Trash',
+        component: () => import('@/views/trash/index.vue')
       }
     ]
   },
