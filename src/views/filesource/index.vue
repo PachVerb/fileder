@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-14 01:21:59
+ * @LastEditTime: 2021-05-15 00:19:54
  * @Description: 
 -->
 <template>
@@ -93,37 +93,18 @@
       :mtype="menutype"
       @close="visible = $event"
     ></create-dir>
+
+    <up-file
+      :tvisible="tvisible"
+      :tree="treeData"
+      @close="tvisible = $event"
+    ></up-file>
+
     <a-back-top>
       <div class="ant-back-top-inner">
         UP
       </div>
     </a-back-top>
-
-    <a-drawer
-      title="Basic Drawer"
-      placement="right"
-      :closable="false"
-      :visible="tvisible"
-      :width="600"
-    >
-      <a-upload-dragger
-        name="file"
-        :multiple="true"
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-        @change="handleChange"
-      >
-        <p class="ant-upload-drag-icon">
-          <a-icon type="inbox" />
-        </p>
-        <p class="ant-upload-text">
-          Click or drag file to this area to upload
-        </p>
-        <p class="ant-upload-hint">
-          Support for a single or bulk upload. Strictly prohibit from uploading
-          company data or other band files
-        </p>
-      </a-upload-dragger>
-    </a-drawer>
   </a-card>
 </template>
 
@@ -146,17 +127,15 @@ import {
   Divider,
   notification,
   BackTop,
-  message,
-  Upload,
-  Drawer
+  message
 } from 'ant-design-vue';
 import createDir from './createDir.vue';
+import upFile from './UploadFile.vue';
 import api from '@/api/api';
 const { Search } = Input;
 const { Item } = Menu;
 const { Button } = Dropdown;
 const { DirectoryTree, TreeNode } = Tree;
-const { Dragger: DragUp } = Upload;
 
 @Component({
   name: 'File',
@@ -178,11 +157,11 @@ const { Dragger: DragUp } = Upload;
     'a-divider': Divider,
     'a-dropdown': Dropdown,
     'a-back-top': BackTop,
-    'a-drawer': Drawer,
-    'a-upload-dragger': DragUp,
+    upFile,
     BMenu,
     createDir
-  }
+  },
+  inject: ['reload']
 })
 export default class File extends Vue {
   $req = Vue.prototype.$req;
@@ -365,7 +344,7 @@ export default class File extends Vue {
   async Remove(path: string) {
     try {
       const res = await this.$req.post(api.file.rmove, { path });
-
+      (this as any).reload();
       return res;
     } catch (err) {
       message.warning('操作失败:' + err);
@@ -374,21 +353,10 @@ export default class File extends Vue {
 
   // upload
 
-  handleChange(info: any) {
-    const status = info.file.status;
-    if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (status === 'done') {
-      this.$message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      this.$message.error(`${info.file.name} file upload failed.`);
-    }
-  }
-
   onUp() {
     this.tvisible = true;
   }
+
   //
   created(): void {
     this.getList(); // 初始化目录

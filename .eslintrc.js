@@ -18,7 +18,9 @@ module.exports = {
     'quotes': 'off',
     '@typescript-eslint/no-explicit-any': ['off'],
      "space-before-function-paren": [2, "never"],
-    'semi':'off'
+    'semi':'off',
+    "indent": 'off',
+    '@typescript-eslint/no-var-requires': 0
   },
   overrides: [
     {

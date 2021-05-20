@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-05-10 01:12:17
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-12 20:48:29
+ * @LastEditTime: 2021-05-15 22:10:48
  * @Description: 
 -->
 <template>
@@ -66,7 +66,8 @@ Modal.install(Vue);
     $router(to, from) {
       console.log(to, from);
     }
-  }
+  },
+  inject: ['reload']
 })
 export default class Dir extends Vue {
   confirmLoading = false;
@@ -165,6 +166,7 @@ export default class Dir extends Vue {
       message.success(res.data.msg);
       this.init();
       this.$emit('close', false);
+      this.reload();
     } catch (err) {
       console.log(err);
     } finally {

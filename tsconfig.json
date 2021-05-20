@@ -12,8 +12,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
-    "typeRoots": ["./src/type"],
-    "types": ["webpack-env", "jest", "vue-class-component", "./src/type"],
+    "types": ["webpack-env", "jest", "vue-class-component"],
     "paths": {
       "@/*": ["src/*"]
     },
@@ -25,8 +24,7 @@
     "src/**/*.vue",
     "src/**/*.d.ts",
     "tests/**/*.ts",
-    "tests/**/*.tsx",
-    "node_modules/vue-class-component/**/*.d.ts"
+    "tests/**/*.tsx"
   ],
   "exclude": ["node_modules"]
 }
