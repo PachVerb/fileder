@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
-const { config } = require("process");
 const createDir = require("../utils/creatDir");
 const root = "/Users/ousan/desktop/test";
 router.get("/list", async (req, res) => {
@@ -110,10 +109,10 @@ router.post("/remove", async (req, res) => {
   const fullPath = root + path.substring(path.indexOf("/") + 1, path.length);
 
   try {
-    await fs.promises.rmdir(fullPath, {
+    await fs.promises.rm(fullPath, {
       maxRetries: 1,
       retryDelay: 100,
-      recursive: false,
+      recursive: true,
     });
     res.send({ code: 0, msg: "删除成功" });
   } catch (err) {

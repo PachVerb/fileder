@@ -7,11 +7,16 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "bufferutil": "^4.0.3",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "eiows": "^3.6.0",
     "express": "~4.16.1",
     "express-session": "^1.17.1",
-    "morgan": "~1.9.1"
+    "morgan": "~1.9.1",
+    "socket.io": "^4.1.1",
+    "socket.io-stream": "^0.9.1",
+    "utf-8-validate": "^5.0.5"
   },
   "devDependencies": {
     "node-dev": "^6.7.0"

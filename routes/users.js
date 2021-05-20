@@ -1,9 +1,9 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const user = require('../db/count');
-const info = require('../db/userinfo');
-const { pachverb } = user
-const session = require('express-session')
+const user = require("../db/count");
+const info = require("../db/userinfo");
+const { pachverb } = user;
+const session = require("express-session");
 /* GET users listing. */
 
 /** 
@@ -20,31 +20,36 @@ const session = require('express-session')
  * 
  * 
 */
-router.post('/login', function(req, res, next) {
-  console.log(req.body.user)
-  if ((req.body.user && req.body.user === pachverb.username) && (req.body.pass && req.body.pass === pachverb.pass) ) {
-    req.session.user = req.body.user // 设置session
-    res.send({code: 0, msg: '登陆成功', sessionId: req.session.id})
+router.post("/login", function (req, res, next) {
+  console.log(req.body.user);
+  if (
+    req.body.user &&
+    req.body.user === pachverb.username &&
+    req.body.pass &&
+    req.body.pass === pachverb.pass
+  ) {
+    req.session.user = req.body.user; // 设置session
+    res.send({ code: 0, msg: "登陆成功", sessionId: req.session.id });
   } else {
-    res.send({code: 1, msg: '账号或密码错误'});
+    res.send({ code: 1, msg: "账号或密码错误" });
   }
 });
 
-router.get('/userinfo', function(req, res, next) {
-  console.log(req)
+router.get("/userinfo", function (req, res, next) {
+  console.log(req);
   if (req.session.user) {
     res.send({
       code: 0,
-      info: info[req.session.user]
-    })
+      info: info[req.session.user],
+    });
   } else {
-    res.status(401).end()
+    res.status(401).end();
   }
-})
+});
 
-router.get('/logout', function(req, res, next) {
-  req.session.destroy() // 销毁session
-  res.send({code: 0, msg: '退出成功'})
-})
+router.get("/logout", function (req, res, next) {
+  req.session.destroy(); // 销毁session
+  res.send({ code: 0, msg: "退出成功" });
+});
 
 module.exports = router;
