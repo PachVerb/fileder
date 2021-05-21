@@ -20,6 +20,7 @@
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-echarts": "*",
+    "vue-fullscreen": "^2.3.5",
     "vue-progressbar": "^0.7.5",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",

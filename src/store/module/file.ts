@@ -2,17 +2,20 @@
  * @Author: wangshan
  * @Date: 2021-05-19 01:15:35
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-21 02:07:54
+ * @LastEditTime: 2021-05-22 00:45:14
  * @Description:
  */
-let Files = {
+const files = {
   state: () => ({
-    files: []
+    fdir: []
   }),
   mutations: {
     addFile(state: any, payload: any) {
-      state.files.push(payload);
+      state.fdir.push(payload);
+    },
+    clearFile(state: any, payload: any) {
+      state.fdir = [];
     }
   }
 };
-export default Files;
+export default files;

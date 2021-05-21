@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-05-03 22:27:40
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-14 01:10:09
+ * @LastEditTime: 2021-05-22 01:34:28
  * @Description: 
 -->
 <template>
@@ -34,26 +34,37 @@
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header style="background: #fff; padding: 0">
-        <a-row>
-          <a-col :span="2" push="22">
-            <user-avater></user-avater>
-          </a-col>
-        </a-row>
-      </a-layout-header>
-      <a-layout-content style="margin: 20px 16px; background: #fff">
-        <router-view></router-view>
-      </a-layout-content>
+      <fullscreen ref="fullscreen" @change="fullscreenChange">
+        <a-layout-header style="background: #fff; padding: 0">
+          <a-row type="flex" justify="end">
+            <a-col :span="1">
+              <a-button
+                :icon="fullscreenicon"
+                type="link"
+                size="large"
+                @click="toggle"
+              ></a-button>
+            </a-col>
+            <a-col :span="1">
+              <user-avater></user-avater>
+            </a-col>
+          </a-row>
+        </a-layout-header>
+        <a-layout-content style="margin: 20px 16px; background: #fff">
+          <router-view></router-view>
+        </a-layout-content>
+      </fullscreen>
     </a-layout>
   </a-layout>
 </template>
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { Layout, Row, Col, Icon, Menu } from 'ant-design-vue';
+import { Layout, Row, Col, Icon, Menu, Button } from 'ant-design-vue';
 import { userAvater } from '@/components/index';
 // import route from '@/router/index.ts';
-
+import fullscreen from 'vue-fullscreen';
+Vue.use(fullscreen);
 const { Header, Content, Sider } = Layout;
 const { Item, SubMenu } = Menu;
 @Component({
@@ -69,6 +80,7 @@ const { Item, SubMenu } = Menu;
     'a-menu': Menu,
     'a-menu-item': Item,
     'a-sub-menu': SubMenu,
+    'a-button': Button,
     userAvater
   },
   watch: {}
@@ -76,6 +88,8 @@ const { Item, SubMenu } = Menu;
 export default class layout extends Vue {
   // * Data
   collapsed = false;
+  fullscreen = false;
+  fullscreenicon = 'fullscreen';
 
   defaultMenu = location.pathname;
 
@@ -84,10 +98,26 @@ export default class layout extends Vue {
     console.log('Hello World!');
   }
 
+  toggle() {
+    (this.$refs.fullscreen as any).toggle(); // recommended
+    // this.fullscreen = !this.fullscreen // deprecated
+  }
+
+  fullscreenChange(fullscreen: any) {
+    this.fullscreen = fullscreen;
+    this.fullscreen
+      ? (this.fullscreenicon = 'fullscreen-exit')
+      : (this.fullscreenicon = 'fullscreen');
+  }
+
   //
   checkview(val: { key: string }): void {
     const { key } = val;
     this.$router.push({ path: key });
+  }
+
+  mounted() {
+    console.log(this);
   }
 
   // * Hooks

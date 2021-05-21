@@ -2,12 +2,14 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-15 00:00:13
+ * @LastEditTime: 2021-05-22 00:46:17
  * @Description: 
 -->
 <template>
   <div id="app">
-    <router-view v-if="isRouterShow" />
+    <keep-alive>
+      <router-view v-if="isRouterShow" />
+    </keep-alive>
   </div>
 </template>
 <script>

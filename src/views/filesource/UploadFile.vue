@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-05-15 00:12:26
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-21 02:05:59
+ * @LastEditTime: 2021-05-22 00:21:30
  * @Description: 
 -->
 <template>
@@ -73,7 +73,7 @@
       <a-button style="marginRight: 8px" @click="onClose">
         Cancel
       </a-button>
-      <a-button type="primary" @click="onUP">
+      <a-button type="primary" @click="onUP" :loading="updisbtn">
         Submit
       </a-button>
     </div>
@@ -128,6 +128,8 @@ export default class UploadF extends Vue {
   dirPath = '';
 
   files = null;
+
+  updisbtn = false;
 
   get treec() {
     return this.tree
@@ -212,17 +214,27 @@ export default class UploadF extends Vue {
     const blobStream = ss.createBlobReadStream(file);
     let size = 0;
     this.$store.commit('addFile', file);
-    // ss(socket).emit('file', stream, {
-    //   size: file.size,
-    //   path: this.dirPath,
-    //   filename: file.name
-    // });
-    // blobStream.on('data', function(chunk) {
-    //   size += chunk.length;
-    //   // -> e.g. '42%'
-    //   socket.emit('process', Math.floor((size / file.size) * 100) + '%');
-    // });
-    console.log(this.$store.File);
+
+    ss(socket).emit('file', stream, {
+      size: file.size,
+      path: this.dirPath,
+      filename: file.name
+    });
+
+    this.updisbtn = true;
+
+    blobStream.on('data', function(chunk) {
+      size += chunk.length;
+
+      socket.emit('process', Math.floor((size / file.size) * 100));
+    });
+
+    blobStream.on('end', () => {
+      // 流传输完毕，关闭上传窗口。
+      // btn节流处理
+      this.updisbtn = true;
+      this.$emit('close', false);
+    });
 
     blobStream.pipe(stream);
   }

@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-15 00:19:54
+ * @LastEditTime: 2021-05-22 01:01:33
  * @Description: 
 -->
 <template>
@@ -39,12 +39,7 @@
           <a-button type="danger" icon="delete" @click="onDelete">
             删除
           </a-button>
-          <a-button
-            type="danger"
-            icon="close"
-            v-if="checkable"
-            @click="checkable = false"
-          >
+          <a-button type="danger" icon="close" v-if="checkable" @click="Cancle">
             取消
           </a-button>
         </a-space>
@@ -170,7 +165,7 @@ export default class File extends Vue {
 
   aexpandeds = true;
 
-  checkable = true;
+  checkable = false;
 
   visible = false;
 
@@ -317,6 +312,7 @@ export default class File extends Vue {
 
   // 文件选择
   onDelete() {
+    this.checkable = true;
     if (
       !this.checkedKey.checked ||
       this.checkedKey.checked.length > 1 ||
@@ -349,6 +345,12 @@ export default class File extends Vue {
     } catch (err) {
       message.warning('操作失败:' + err);
     }
+  }
+
+  // 取消操作
+  Cancle() {
+    this.checkedKey = {};
+    this.checkable = false;
   }
 
   // upload
