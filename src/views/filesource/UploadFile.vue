@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-05-15 00:12:26
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-22 00:21:30
+ * @LastEditTime: 2021-05-24 00:38:42
  * @Description: 
 -->
 <template>
@@ -213,7 +213,7 @@ export default class UploadF extends Vue {
     const file = this.files;
     const blobStream = ss.createBlobReadStream(file);
     let size = 0;
-    this.$store.commit('addFile', file);
+    this.$store.commit('addFile', { currentfile: file, upState: 1 });
 
     ss(socket).emit('file', stream, {
       size: file.size,

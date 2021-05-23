@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-05-14 01:05:03
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-22 00:49:32
+ * @LastEditTime: 2021-05-24 01:02:58
  * @Description: 
 -->
 <template>
@@ -15,16 +15,21 @@
         <a-button type="danger" icon="close">取消</a-button>
       </a-col> -->
     </a-row>
+    <a-divider />
     <a-row>
       <a-col :span="24">
         <a-list item-layout="horizontal" :data-source="List">
           <a-list-item slot="renderItem" slot-scope="item">
             <a-list-item-meta>
               <template slot="description">
-                <a-progress :percent="pro" :showInfo="true" status="active" />
+                <a-progress
+                  :percent="item.upState === 1 ? pro : 100"
+                  :showInfo="true"
+                  :status="item.upState === 1 ? 'active' : 'success'"
+                />
               </template>
 
-              <span slot="title">{{ item.name }}</span>
+              <span slot="title">{{ item.currentfile.name }}</span>
 
               <div slot="avatar">
                 <a-button type="link" icon="file-add" size="large"></a-button>
@@ -32,12 +37,11 @@
             </a-list-item-meta>
             <div slot="extra">
               <a-space>
-                <a-button type="link" size="large" icon="pause-circle" />
                 <a-button
                   type="link"
                   size="large"
                   icon="delete"
-                  @click="dele"
+                  @click="dele(item)"
                 />
               </a-space>
             </div>
@@ -62,8 +66,7 @@ import {
   Avatar,
   Divider,
   Progress,
-  Icon,
-  Dropdown
+  Icon
 } from 'ant-design-vue';
 const { Item } = List;
 const { Meta } = Item;
@@ -82,23 +85,21 @@ const { Meta } = Item;
     'a-divider': Divider,
     'a-progress': Progress,
     'a-icon': Icon
-  }
+  },
+  inject: ['reload']
 })
 export default class Tran extends Vue {
   List = [];
 
   pro = 0;
 
-  dele() {
-    this.$store.commit('clearFile');
-  }
-
-  updated() {
-    console.log(this.pro);
+  dele(item) {
+    this.$store.commit('clearFile', item);
+    this.reload();
   }
 
   created() {
-    this.List = this.$store.state.file.fdir;
+    this.List = [...this.$store.state.file.fdir];
   }
 
   mounted() {
@@ -107,6 +108,9 @@ export default class Tran extends Vue {
     });
     socket.on('process', pro => {
       this.pro = pro;
+      if (pro === 100) {
+        this.$store.commit('updateState');
+      }
     });
   }
 }
