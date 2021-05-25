@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-22 01:01:33
+ * @LastEditTime: 2021-05-26 00:05:50
  * @Description: 
 -->
 <template>
@@ -22,7 +22,12 @@
             </a-menu>
             <a-icon slot="icon" type="plus-circle" />
           </a-dropdown>
-          <a-button type="primary" style="background: #4ba47c" icon="download">
+          <a-button
+            type="primary"
+            style="background: #4ba47c"
+            @click="download"
+            icon="download"
+          >
             下载
           </a-button>
           <a-button
@@ -127,6 +132,7 @@ import {
 import createDir from './createDir.vue';
 import upFile from './UploadFile.vue';
 import api from '@/api/api';
+const axios = require('axios').default;
 const { Search } = Input;
 const { Item } = Menu;
 const { Button } = Dropdown;
@@ -172,6 +178,10 @@ export default class File extends Vue {
   menutype = 0;
 
   checkedKey: any = {};
+
+  fileinfo = null;
+
+  loaded = 0;
 
   // 传输
   tvisible = false;
@@ -259,10 +269,15 @@ export default class File extends Vue {
     }
   }
 
+  // 选择文件
   // 加载目录
 
-  onSelect(key: unknown, e: { node: { onExpand: () => void } }): void {
+  onSelect(
+    key: unknown,
+    e: { node: { onExpand: () => void; dataRef: any } }
+  ): void {
     e.node.onExpand();
+    (this.fileinfo as any) = e.node.dataRef;
   }
 
   async getList(): Promise<void> {
@@ -351,6 +366,40 @@ export default class File extends Vue {
   Cancle() {
     this.checkedKey = {};
     this.checkable = false;
+  }
+
+  // download-file
+  download() {
+    if (!this.fileinfo || (this.fileinfo as any).type) {
+      notification.error({
+        message: '提示',
+        description: '请选择文件上传'
+      });
+      return false;
+    }
+    const vm = this;
+    axios({
+      method: 'get',
+      url: api.file.download,
+      responseType: 'blob',
+      onDownloadProgress(process: any) {
+        const percentCompleted = Math.floor(
+          (process.loaded * 100) / process.total
+        );
+        console.log(percentCompleted);
+      },
+      params: {
+        fpath: (this.fileinfo as any).path
+      }
+    }).then((res: any) => {
+      console.log(res, 111);
+      // 后端文件流下载，设置blob接收下载
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(new Blob([res.data]));
+      link.download = (this.fileinfo as any).path;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
   }
 
   // upload

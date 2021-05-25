@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-05-03 22:27:40
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-13 23:28:49
+ * @LastEditTime: 2021-05-25 22:04:10
  * @Description:
  */
 const api = {
@@ -15,7 +15,8 @@ const api = {
     list: '/api/file/list',
     getlist: '/api/file/getcontent',
     mkdir: '/api/file/mkdir',
-    rmove: '/api/file/remove'
+    rmove: '/api/file/remove',
+    download: '/api/file/download'
   }
 };
 export default api;

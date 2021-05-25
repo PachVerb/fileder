@@ -20,7 +20,8 @@ module.exports = {
      "space-before-function-paren": [2, "never"],
     'semi':'off',
     "indent": 'off',
-    '@typescript-eslint/no-var-requires': 0
+    '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/no-this-alias': 0
   },
   overrides: [
     {

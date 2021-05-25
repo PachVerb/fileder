@@ -26,6 +26,11 @@ const files = {
       console.log(payload);
       state.fdir.delete(payload);
     }
+  },
+  actions: {
+    down(state: any): void {
+      return undefined;
+    }
   }
 };
 export default files;
