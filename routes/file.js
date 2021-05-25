@@ -120,4 +120,24 @@ router.post("/remove", async (req, res) => {
   }
 });
 
+// 文件下载
+router.get("/download", (req, res) => {
+  const { fpath } = req.query; // 获取查询参数
+  const fullPath = root + fpath.substring(fpath.indexOf("/") + 1, fpath.length);
+  const fread = fs.createReadStream(fullPath);
+  let size = 0;
+  let chunks = 0;
+  res.set("Content-Type", "application/octet-stream");
+  fread.on("data", (chunk) => {
+    console.log(chunk);
+    size += chunk.length;
+    chunks += chunk;
+  });
+  fread.on("end", () => {
+    res.set({ "Content-Length": size }).send(chunks);
+  });
+
+  //   fread.pipe(res);
+});
+
 module.exports = router;
