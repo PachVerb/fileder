@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-05-14 01:05:03
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-24 01:02:58
+ * @LastEditTime: 2021-05-26 23:09:50
  * @Description: 
 -->
 <template>
@@ -29,7 +29,7 @@
                 />
               </template>
 
-              <span slot="title">{{ item.currentfile.name }}</span>
+              <span slot="title">{{ item.name }}</span>
 
               <div slot="avatar">
                 <a-button type="link" icon="file-add" size="large"></a-button>

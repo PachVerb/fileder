@@ -2,7 +2,7 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-05-26 00:05:50
+ * @LastEditTime: 2021-05-27 00:13:32
  * @Description: 
 -->
 <template>
@@ -132,12 +132,16 @@ import {
 import createDir from './createDir.vue';
 import upFile from './UploadFile.vue';
 import api from '@/api/api';
+import io from 'socket.io-client';
+import { commitBar } from '@/components/index';
 const axios = require('axios').default;
 const { Search } = Input;
 const { Item } = Menu;
 const { Button } = Dropdown;
 const { DirectoryTree, TreeNode } = Tree;
-
+const socket = io('http://127.0.0.1:3000', {
+  withCredentials: true
+});
 @Component({
   name: 'File',
   components: {
@@ -160,7 +164,8 @@ const { DirectoryTree, TreeNode } = Tree;
     'a-back-top': BackTop,
     upFile,
     BMenu,
-    createDir
+    createDir,
+    commitBar
   },
   inject: ['reload']
 })
@@ -377,6 +382,7 @@ export default class File extends Vue {
       });
       return false;
     }
+    this.$store.commit('addDownFile', this.fileinfo);
     const vm = this;
     axios({
       method: 'get',
@@ -386,13 +392,13 @@ export default class File extends Vue {
         const percentCompleted = Math.floor(
           (process.loaded * 100) / process.total
         );
-        console.log(percentCompleted);
+        // console.log(process, percentCompleted);
+        socket.emit('process', percentCompleted);
       },
       params: {
         fpath: (this.fileinfo as any).path
       }
     }).then((res: any) => {
-      console.log(res, 111);
       // 后端文件流下载，设置blob接收下载
       const link = document.createElement('a');
       link.href = URL.createObjectURL(new Blob([res.data]));

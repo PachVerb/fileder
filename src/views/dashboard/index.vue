@@ -2,73 +2,58 @@
  * @Author: wangshan
  * @Date: 2021-04-30 20:03:36
  * @LastEditors: wangshan
- * @LastEditTime: 2021-04-30 21:00:15
+ * @LastEditTime: 2021-05-27 00:34:14
  * @Description: 
 -->
 <template>
   <a-card>
     <a-row>
       <a-col :md="24" :lg="24">
-        <a-carousel>
-          <div><h3>1</h3></div>
-          <div><h3>2</h3></div>
-          <div><h3>3</h3></div>
-          <div><h3>4</h3></div>
-        </a-carousel>
-      </a-col>
-    </a-row>
-    <br />
-    <a-row>
-      <a-col :md="6" :lg="6">
-        <a-card title="Default size card" style="width: 300px">
-          <a slot="extra" href="#">more</a>
-          <p>card content</p>
-          <p>card content</p>
-          <p>card content</p>
-        </a-card>
-      </a-col>
-      <a-col :md="6" :lg="6">
-        <a-card title="Default size card" style="width: 300px">
-          <a slot="extra" href="#">more</a>
-          <p>card content</p>
-          <p>card content</p>
-          <p>card content</p>
-        </a-card>
-      </a-col>
-      <a-col :md="6" :lg="6">
-        <a-card title="Default size card" style="width: 300px">
-        <a slot="extra" href="#">more</a>
-          <p>card content</p>
-          <p>card content</p>
-          <p>card content</p>
-        </a-card>
-      </a-col>
-      <a-col :md="6" :lg="6">
-        <a-card title="Default size card" style="width: 300px">
-          <a slot="extra" href="#">more</a>
-          <p>card content</p>
-          <p>card content</p>
-          <p>card content</p>
-        </a-card>
+        <commit-bar :chartData="data" />
       </a-col>
     </a-row>
   </a-card>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Card, Row, Col, Carousel } from 'ant-design-vue'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Card, Row, Col, Carousel } from 'ant-design-vue';
+import { commitBar } from '@/components/index';
 @Component({
-  name: "home",
+  name: 'home',
   components: {
     'a-card': Card,
     'a-row': Row,
     'a-col': Col,
-    'a-carousel': Carousel
+    'a-carousel': Carousel,
+    commitBar
   }
 })
 export default class Home extends Vue {
+  data = {
+    labels: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ],
+    datasets: [
+      {
+        label: 'GitHub Commits',
+        backgroundColor: '#f87979',
+        data: [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
+      }
+    ]
+  };
 }
 </script>
 <style lang="less" scoped>
