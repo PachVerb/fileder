@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static("public"));
 // !session注册
+
 app.use(
   session({
     name: "token",
@@ -37,7 +38,7 @@ app.all("*", function (req, res, next) {
   if (req.method === "OPTIONS") res.send(200);
   /*让options请求快速返回*/ else next();
 });
-
+// io 注册
 app.use("/users", usersRouter);
 app.use("/file", file);
 

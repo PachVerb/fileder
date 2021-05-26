@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const fs = require("fs");
+const io = require("../bin/www");
 const createDir = require("../utils/creatDir");
 const root = "/Users/ousan/desktop/test";
 router.get("/list", async (req, res) => {
@@ -125,19 +126,13 @@ router.get("/download", (req, res) => {
   const { fpath } = req.query; // 获取查询参数
   const fullPath = root + fpath.substring(fpath.indexOf("/") + 1, fpath.length);
   const fread = fs.createReadStream(fullPath);
-  let size = 0;
-  let chunks = 0;
-  res.set("Content-Type", "application/octet-stream");
-  fread.on("data", (chunk) => {
-    console.log(chunk);
-    size += chunk.length;
-    chunks += chunk;
-  });
-  fread.on("end", () => {
-    res.set({ "Content-Length": size }).send(chunks);
+
+  const fstate = fs.stat(fullPath, (err, stat) => {
+    if (err) res.end(err);
+    res.set({ "Content-Length": stat.size });
   });
 
-  //   fread.pipe(res);
+  fread.pipe(res);
 });
 
 module.exports = router;
