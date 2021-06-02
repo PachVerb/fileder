@@ -26,4 +26,4 @@ yarn lint
 ```
 
 ### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [demo](http:121.40.30.117:4500).
